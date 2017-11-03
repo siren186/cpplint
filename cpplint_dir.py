@@ -21,4 +21,5 @@ if __name__ == '__main__':
         print('Please set the absolute path as the first parameter for parse.')
         sys.exit()
     for path in all_files(sys.argv[1],'*.cpp;*.h;*.c'):
-        os.system("python cpplint.py %s"%(path))
+        path = path.replace("\\", "/")
+        os.system("python3 " + os.path.split(os.path.realpath(__file__))[0] + "/cpplint.py %s"%(path))
