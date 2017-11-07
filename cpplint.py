@@ -1928,12 +1928,12 @@ def CheckForCopyright(filename, lines, error):
 
   # We'll say it should occur by line 10. Don't forget there's a
   # dummy line at the front.
-  for line in range(1, min(len(lines), 11)):
-    if re.search(r'Copyright', lines[line], re.I): break
-  else:                       # means no copyright line was found
-    error(filename, 0, 'legal/copyright', 5,
-          'No copyright message found.  '
-          'You should have a line: "Copyright [year] <Copyright Owner>"')
+#  for line in range(1, min(len(lines), 11)):
+#    if re.search(r'Copyright', lines[line], re.I): break
+#  else:                       # means no copyright line was found
+#    error(filename, 0, 'legal/copyright', 5,
+#          'No copyright message found.  '
+#          'You should have a line: "Copyright [year] <Copyright Owner>"')
 
 
 def GetIndentLevel(line):
@@ -2041,49 +2041,49 @@ def CheckForHeaderGuard(filename, clean_lines, error):
 
   # The guard should be PATH_FILE_H_, but we also allow PATH_FILE_H__
   # for backward compatibility.
-  if ifndef != cppvar:
-    error_level = 0
-    if ifndef != cppvar + '_':
-      error_level = 5
-
-    ParseNolintSuppressions(filename, raw_lines[ifndef_linenum], ifndef_linenum,
-                            error)
-    error(filename, ifndef_linenum, 'build/header_guard', error_level,
-          '#ifndef header guard has wrong style, please use: %s' % cppvar)
+# if ifndef != cppvar:
+#   error_level = 0
+#   if ifndef != cppvar + '_':
+#     error_level = 5
+#
+#   ParseNolintSuppressions(filename, raw_lines[ifndef_linenum], ifndef_linenum,
+#                           error)
+#   error(filename, ifndef_linenum, 'build/header_guard', error_level,
+#         '#ifndef header guard has wrong style, please use: %s' % cppvar)
 
   # Check for "//" comments on endif line.
-  ParseNolintSuppressions(filename, raw_lines[endif_linenum], endif_linenum,
-                          error)
-  match = Match(r'#endif\s*//\s*' + cppvar + r'(_)?\b', endif)
-  if match:
-    if match.group(1) == '_':
-      # Issue low severity warning for deprecated double trailing underscore
-      error(filename, endif_linenum, 'build/header_guard', 0,
-            '#endif line should be "#endif  // %s"' % cppvar)
-    return
+# ParseNolintSuppressions(filename, raw_lines[endif_linenum], endif_linenum,
+#                         error)
+# match = Match(r'#endif\s*//\s*' + cppvar + r'(_)?\b', endif)
+# if match:
+#   if match.group(1) == '_':
+#     # Issue low severity warning for deprecated double trailing underscore
+#     error(filename, endif_linenum, 'build/header_guard', 0,
+#           '#endif line should be "#endif  // %s"' % cppvar)
+#   return
 
   # Didn't find the corresponding "//" comment.  If this file does not
   # contain any "//" comments at all, it could be that the compiler
   # only wants "/**/" comments, look for those instead.
-  no_single_line_comments = True
-  for i in xrange(1, len(raw_lines) - 1):
-    line = raw_lines[i]
-    if Match(r'^(?:(?:\'(?:\.|[^\'])*\')|(?:"(?:\.|[^"])*")|[^\'"])*//', line):
-      no_single_line_comments = False
-      break
-
-  if no_single_line_comments:
-    match = Match(r'#endif\s*/\*\s*' + cppvar + r'(_)?\s*\*/', endif)
-    if match:
-      if match.group(1) == '_':
-        # Low severity warning for double trailing underscore
-        error(filename, endif_linenum, 'build/header_guard', 0,
-              '#endif line should be "#endif  /* %s */"' % cppvar)
-      return
-
-  # Didn't find anything
-  error(filename, endif_linenum, 'build/header_guard', 5,
-        '#endif line should be "#endif  // %s"' % cppvar)
+# no_single_line_comments = True
+# for i in xrange(1, len(raw_lines) - 1):
+#   line = raw_lines[i]
+#   if Match(r'^(?:(?:\'(?:\.|[^\'])*\')|(?:"(?:\.|[^"])*")|[^\'"])*//', line):
+#     no_single_line_comments = False
+#     break
+#
+# if no_single_line_comments:
+#   match = Match(r'#endif\s*/\*\s*' + cppvar + r'(_)?\s*\*/', endif)
+#   if match:
+#     if match.group(1) == '_':
+#       # Low severity warning for double trailing underscore
+#       error(filename, endif_linenum, 'build/header_guard', 0,
+#             '#endif line should be "#endif  /* %s */"' % cppvar)
+#     return
+#
+# # Didn't find anything
+# error(filename, endif_linenum, 'build/header_guard', 5,
+#       '#endif line should be "#endif  // %s"' % cppvar)
 
 
 def CheckHeaderFileIncluded(filename, include_state, error):
@@ -2131,9 +2131,9 @@ def CheckForBadCharacters(filename, lines, error):
     error: The function to call with any errors found.
   """
   for linenum, line in enumerate(lines):
-    if unicode_escape_decode('\ufffd') in line:
-      error(filename, linenum, 'readability/utf8', 5,
-            'Line contains invalid UTF-8 (or Unicode replacement character).')
+#   if unicode_escape_decode('\ufffd') in line:
+#     error(filename, linenum, 'readability/utf8', 5,
+#           'Line contains invalid UTF-8 (or Unicode replacement character).')
     if '\0' in line:
       error(filename, linenum, 'readability/nul', 5, 'Line contains NUL byte.')
 
@@ -2796,10 +2796,10 @@ class NestingState(object):
       if access_match:
         classinfo.access = access_match.group(2)
 
-        # Check that access keywords are indented +1 space.  Skip this
+        # Check that access keywords are indented no space.  Skip this
         # check if the keywords are not preceded by whitespaces.
         indent = access_match.group(1)
-        if (len(indent) != classinfo.class_indent + 1 and
+        if (len(indent) != classinfo.class_indent and
             Match(r'^\s*$', indent)):
           if classinfo.is_struct:
             parent = 'struct ' + classinfo.name
@@ -2809,7 +2809,7 @@ class NestingState(object):
           if access_match.group(3):
             slots = access_match.group(3)
           error(filename, linenum, 'whitespace/indent', 3,
-                '%s%s: should be indented +1 space inside %s' % (
+                '%s%s: should be indented no space inside %s' % (
                     access_match.group(2), slots, parent))
 
     # Consume braces or semicolons from what's left of the line
@@ -3239,14 +3239,12 @@ def CheckComment(line, filename, linenum, next_line_start, error):
   if commentpos != -1:
     # Check if the // may be in quotes.  If so, ignore it
     if re.sub(r'\\.', '', line[0:commentpos]).count('"') % 2 == 0:
-      # Allow one space for new scopes, two spaces otherwise:
+      # Allow one space for new scopes, one spaces otherwise:
       if (not (Match(r'^.*{ *//', line) and next_line_start == commentpos) and
           ((commentpos >= 1 and
-            line[commentpos-1] not in string.whitespace) or
-           (commentpos >= 2 and
-            line[commentpos-2] not in string.whitespace))):
+            line[commentpos-1] not in string.whitespace))):
         error(filename, linenum, 'whitespace/comments', 2,
-              'At least two spaces is best between code and comments')
+              'At least one spaces is best between code and comments')
 
       # Checks for common mistakes in TODO comments.
       comment = line[commentpos:]
@@ -4695,9 +4693,9 @@ def CheckIncludeLine(filename, clean_lines, linenum, include_state, error):
   # We also make an exception for Lua headers, which follow google
   # naming convention but not the include convention.
   match = Match(r'#include\s*"([^/]+\.h)"', line)
-  if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
-    error(filename, linenum, 'build/include_subdir', 4,
-          'Include the directory when naming .h files')
+# if match and not _THIRD_PARTY_HEADERS_PATTERN.match(match.group(1)):
+#   error(filename, linenum, 'build/include_subdir', 4,
+#         'Include the directory when naming .h files')
 
   # we shouldn't include a file more than once. actually, there are a
   # handful of instances where doing so is okay, but in general it's
@@ -4888,11 +4886,11 @@ def CheckLanguage(filename, clean_lines, linenum, file_extension,
     if not Search(r'\bunsigned short port\b', line):
       error(filename, linenum, 'runtime/int', 4,
             'Use "unsigned short" for ports, not "short"')
-  else:
-    match = Search(r'\b(short|long(?! +double)|long long)\b', line)
-    if match:
-      error(filename, linenum, 'runtime/int', 4,
-            'Use int16/int64/etc, rather than the C type %s' % match.group(1))
+#  else:
+#    match = Search(r'\b(short|long(?! +double)|long long)\b', line)
+#    if match:
+#      error(filename, linenum, 'runtime/int', 4,
+#            'Use int16/int64/etc, rather than the C type %s' % match.group(1))
 
   # Check if some verboten operator overloading is going on
   # TODO(unknown): catch out-of-line unary operator&:
@@ -5294,14 +5292,14 @@ def CheckForNonConstReference(filename, clean_lines, linenum,
           Search(whitelisted_functions, clean_lines.elided[linenum - i - 1])):
         return
 
-  decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
-  for parameter in re.findall(_RE_PATTERN_REF_PARAM, decls):
-    if (not Match(_RE_PATTERN_CONST_REF_PARAM, parameter) and
-        not Match(_RE_PATTERN_REF_STREAM_PARAM, parameter)):
-      error(filename, linenum, 'runtime/references', 2,
-            'Is this a non-const reference? '
-            'If so, make const or use a pointer: ' +
-            ReplaceAll(' *<', '<', parameter))
+# decls = ReplaceAll(r'{[^}]*}', ' ', line)  # exclude function body
+# for parameter in re.findall(_RE_PATTERN_REF_PARAM, decls):
+#   if (not Match(_RE_PATTERN_CONST_REF_PARAM, parameter) and
+#       not Match(_RE_PATTERN_REF_STREAM_PARAM, parameter)):
+#     error(filename, linenum, 'runtime/references', 2,
+#           'Is this a non-const reference? '
+#           'If so, make const or use a pointer: ' +
+#           ReplaceAll(' *<', '<', parameter))
 
 
 def CheckCasts(filename, clean_lines, linenum, error):
@@ -5469,9 +5467,9 @@ def CheckCStyleCast(filename, clean_lines, linenum, cast_type, pattern, error):
     return False
 
   # At this point, all that should be left is actual casts.
-  error(filename, linenum, 'readability/casting', 4,
-        'Using C-style cast.  Use %s<%s>(...) instead' %
-        (cast_type, match.group(1)))
+# error(filename, linenum, 'readability/casting', 4,
+#       'Using C-style cast.  Use %s<%s>(...) instead' %
+#       (cast_type, match.group(1)))
 
   return True
 
