@@ -22,4 +22,4 @@ if __name__ == '__main__':
         sys.exit()
     for path in all_files(sys.argv[1],'*.cpp;*.h;*.c'):
         path = path.replace("\\", "/")
-        os.system("python3 " + os.path.split(os.path.realpath(__file__))[0] + "/cpplint.py --linelength=120 %s"%(path))
+        os.system("python3 " + os.path.split(os.path.realpath(__file__))[0] + "/cpplint.py --output=vs7 --linelength=120 %s"%(path))
